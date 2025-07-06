@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON to EPUB Converter</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>📚 JSON to EPUB Converter</h1>
+            <p>Transform your structured JSON book data into a proper EPUB file</p>
+        </header>
+
+        <main class="main-content">
+            <!-- File Upload Section -->
+            <section class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📁</div>
+                    <h3>Drop your JSON file here</h3>
+                    <p>or <span class="browse-link" id="browseLink">browse to select a file</span></p>
+                    <input type="file" id="fileInput" accept=".json" style="display: none;">
+                    <div class="file-info" id="fileInfo" style="display: none;">
+                        <span class="file-name" id="fileName"></span>
+                        <span class="file-size" id="fileSize"></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Preview Section -->
+            <section class="preview-section" id="previewSection" style="display: none;">
+                <h2>📖 Book Preview</h2>
+                <div class="book-info" id="bookInfo">
+                    <div class="book-cover" id="bookCover"></div>
+                    <div class="book-details">
+                        <h3 id="bookTitle"></h3>
+                        <p class="author" id="bookAuthor"></p>
+                        <p class="description" id="bookDescription"></p>
+                        <div class="stats">
+                            <span class="stat" id="volumeCount"></span>
+                            <span class="stat" id="chapterCount"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="content-preview" id="contentPreview">
+                    <h4>📑 Content Structure</h4>
+                    <div class="volume-list" id="volumeList"></div>
+                </div>
+            </section>
+
+            <!-- Convert Section -->
+            <section class="convert-section" id="convertSection" style="display: none;">
+                <div class="convert-options">
+                    <h3>⚙️ Conversion Options</h3>
+                    <div class="option-group">
+                        <label>
+                            <input type="checkbox" id="includeCover" checked>
+                            Include cover image
+                        </label>
+                        <label>
+                            <input type="checkbox" id="includeTableOfContents" checked>
+                            Generate table of contents
+                        </label>
+                        <label>
+                            <input type="checkbox" id="separateVolumeFiles" checked>
+                            Separate files for each volume
+                        </label>
+                    </div>
+                </div>
+                
+                <button class="convert-btn" id="convertBtn">
+                    <span class="btn-text">🚀 Convert to EPUB</span>
+                    <div class="loading-spinner" id="loadingSpinner" style="display: none;"></div>
+                </button>
+                
+                <div class="progress-bar" id="progressBar" style="display: none;">
+                    <div class="progress-fill" id="progressFill"></div>
+                    <span class="progress-text" id="progressText">0%</span>
+                </div>
+            </section>
+
+            <!-- Error Section -->
+            <section class="error-section" id="errorSection" style="display: none;">
+                <div class="error-message">
+                    <h3>❌ Error</h3>
+                    <p id="errorText"></p>
+                    <button class="retry-btn" id="retryBtn">Try Again</button>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>Built with ❤️ using HTML, CSS, and JavaScript</p>
+            <p>
+                <a href="https://github.com/your-username/json2epub" target="_blank">View on GitHub</a> |
+                <a href="#" id="showHelp">Help & Examples</a>
+            </p>
+        </footer>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal" id="helpModal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModal">&times;</span>
+            <h2>📋 JSON Structure Guide</h2>
+            <div class="help-content">
+                <h3>Required JSON Format:</h3>
+                <pre id="jsonExample"></pre>
+                <h3>Field Descriptions:</h3>
+                <ul>
+                    <li><strong>title:</strong> The book's main title</li>
+                    <li><strong>description:</strong> A brief description of the book</li>
+                    <li><strong>author:</strong> The author's name</li>
+                    <li><strong>cover:</strong> URL to cover image (optional)</li>
+                    <li><strong>content:</strong> Array of volumes with chapters</li>
+                </ul>
+                <h3>Tips:</h3>
+                <ul>
+                    <li>Use plain text for chapter content</li>
+                    <li>Cover images should be JPEG or PNG</li>
+                    <li>Keep chapter content under 1MB each</li>
+                    <li>Use proper HTML entities for special characters</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
