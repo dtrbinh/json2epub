@@ -4,6 +4,7 @@ class JSONToEPUBConverter {
         this.coverImageData = null;
         this.initializeEventListeners();
         this.showHelpExample();
+        this.updateConvertButton();
     }
 
     initializeEventListeners() {
@@ -21,8 +22,14 @@ class JSONToEPUBConverter {
         browseLink.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', this.handleFileSelect.bind(this));
         
+        // Format selection
+        const formatOptions = document.querySelectorAll('input[name="outputFormat"]');
+        formatOptions.forEach(option => {
+            option.addEventListener('change', this.updateConvertButton.bind(this));
+        });
+        
         // Convert button
-        document.getElementById('convertBtn').addEventListener('click', this.convertToEPUB.bind(this));
+        document.getElementById('convertBtn').addEventListener('click', this.convertToFormat.bind(this));
         
         // Retry button
         document.getElementById('retryBtn').addEventListener('click', this.resetApp.bind(this));
@@ -215,15 +222,18 @@ class JSONToEPUBConverter {
             }
             
             // Convert to base64
-            const reader = new FileReader();
-            reader.onload = e => {
-                this.coverImageData = {
-                    data: e.target.result,
-                    type: blob.type,
-                    extension: blob.type.split('/')[1]
-                };
+            const dataUrl = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = e => resolve(e.target.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+            
+            this.coverImageData = {
+                data: dataUrl,
+                type: blob.type,
+                extension: blob.type.split('/')[1]
             };
-            reader.readAsDataURL(blob);
             
         } catch (error) {
             console.warn('Failed to load cover image:', error.message);
@@ -285,115 +295,77 @@ class JSONToEPUBConverter {
         document.getElementById('errorSection').style.display = 'none';
     }
 
-    async convertToEPUB() {
+    updateConvertButton() {
+        const selectedFormat = document.querySelector('input[name="outputFormat"]:checked');
+        const btnText = document.querySelector('.btn-text');
+        
+        if (selectedFormat && btnText) {
+            const formatName = selectedFormat.value.toUpperCase();
+            const formatEmojis = {
+                'epub': '📚',
+                'mobi': '📱',
+                'azw': '🔒',
+                'azw3': '🚀',
+                'pdf': '📄',
+                'html': '🌐',
+                'txt': '📝',
+                'rtf': '📋'
+            };
+            
+            const emoji = formatEmojis[selectedFormat.value] || '🚀';
+            btnText.textContent = `${emoji} Convert to ${formatName}`;
+        }
+    }
+
+    async convertToFormat() {
         try {
-            const convertBtn = document.getElementById('convertBtn');
-            const btnText = document.querySelector('.btn-text');
-            const loadingSpinner = document.getElementById('loadingSpinner');
-            const progressBar = document.getElementById('progressBar');
-            const progressFill = document.getElementById('progressFill');
-            const progressText = document.getElementById('progressText');
-            
-            // Disable button and show loading
-            convertBtn.disabled = true;
-            btnText.textContent = 'Converting...';
-            loadingSpinner.style.display = 'inline-block';
-            progressBar.style.display = 'block';
-            
-            // Create EPUB
-            const zip = new JSZip();
-            
-            // Update progress
-            this.updateProgress(10, 'Creating EPUB structure...');
-            
-            // Add mimetype
-            zip.file('mimetype', 'application/epub+zip');
-            
-            // Add META-INF
-            zip.folder('META-INF');
-            zip.file('META-INF/container.xml', this.generateContainerXML());
-            
-            // Add OEBPS folder
-            const oebps = zip.folder('OEBPS');
-            
-            this.updateProgress(20, 'Generating metadata...');
-            
-            // Add content.opf
-            oebps.file('content.opf', this.generateContentOPF());
-            
-            // Add table of contents
-            oebps.file('toc.ncx', this.generateTOCNCX());
-            oebps.file('toc.xhtml', this.generateTOCXHTML());
-            
-            this.updateProgress(30, 'Adding styles...');
-            
-            // Add styles
-            const styles = oebps.folder('styles');
-            styles.file('style.css', this.generateCSS());
-            
-            // Add images folder and cover
-            if (this.coverImageData) {
-                this.updateProgress(40, 'Processing cover image...');
-                const images = oebps.folder('images');
-                const coverData = this.coverImageData.data.split(',')[1]; // Remove data URL prefix
-                images.file(`cover.${this.coverImageData.extension}`, coverData, {base64: true});
+            const selectedRadio = document.querySelector('input[name="outputFormat"]:checked');
+            if (!selectedRadio) {
+                this.showError('Please select a format first');
+                return;
             }
-            
-            this.updateProgress(50, 'Generating chapters...');
-            
-            // Add content folder and chapters
-            const content = oebps.folder('content');
-            const totalChapters = this.bookData.content.reduce((total, volume) => total + volume.chapters.length, 0);
-            let processedChapters = 0;
-            
-            this.bookData.content.forEach(volume => {
-                volume.chapters.forEach(chapter => {
-                    const chapterFileName = `vol${volume.volume_index}_ch${chapter.chapter_index}.xhtml`;
-                    const chapterContent = this.generateChapterXHTML(volume, chapter);
-                    content.file(chapterFileName, chapterContent);
-                    
-                    processedChapters++;
-                    const progress = 50 + (processedChapters / totalChapters) * 40;
-                    this.updateProgress(progress, `Processing chapter ${processedChapters} of ${totalChapters}...`);
-                });
-            });
-            
-            this.updateProgress(95, 'Finalizing EPUB...');
-            
-            // Generate EPUB file
-            const epubBlob = await zip.generateAsync({
-                type: 'blob',
-                mimeType: 'application/epub+zip',
-                compression: 'DEFLATE'
-            });
-            
-            this.updateProgress(100, 'Download ready!');
-            
-            // Create download link
-            const url = URL.createObjectURL(epubBlob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${this.bookData.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.epub`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            // Reset button
-            setTimeout(() => {
-                convertBtn.disabled = false;
-                btnText.textContent = '🚀 Convert to EPUB';
-                loadingSpinner.style.display = 'none';
-                progressBar.style.display = 'none';
-                this.updateProgress(0, '');
-            }, 2000);
-            
+            const selectedFormat = selectedRadio.value;
+
+            let converter;
+            switch (selectedFormat) {
+                case 'epub':
+                    converter = new EPUBConverter(this);
+                    break;
+                case 'mobi':
+                    converter = new MOBIConverter(this);
+                    break;
+                case 'azw':
+                    converter = new AZWConverter(this);
+                    break;
+                case 'azw3':
+                    converter = new AZW3Converter(this);
+                    break;
+                case 'pdf':
+                    converter = new PDFConverter(this);
+                    break;
+                case 'html':
+                    converter = new HTMLConverter(this);
+                    break;
+                case 'txt':
+                    converter = new TXTConverter(this);
+                    break;
+                case 'rtf':
+                    converter = new RTFConverter(this);
+                    break;
+                default:
+                    throw new Error(`Unsupported format: ${selectedFormat}`);
+            }
+
+            await converter.convert();
         } catch (error) {
             this.showError(`Conversion failed: ${error.message}`);
             this.resetConvertButton();
         }
     }
 
+    // Old conversion methods removed - now using modular converters
+    // All conversion methods have been moved to separate modules in the scripts/ folder
+    
     updateProgress(percentage, text) {
         const progressFill = document.getElementById('progressFill');
         const progressText = document.getElementById('progressText');
@@ -409,9 +381,256 @@ class JSONToEPUBConverter {
         const progressBar = document.getElementById('progressBar');
         
         convertBtn.disabled = false;
-        btnText.textContent = '🚀 Convert to EPUB';
+        this.updateConvertButton();
         loadingSpinner.style.display = 'none';
         progressBar.style.display = 'none';
+    }
+
+    setConvertingState(message) {
+        const convertBtn = document.getElementById('convertBtn');
+        const btnText = document.querySelector('.btn-text');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const progressBar = document.getElementById('progressBar');
+        
+        convertBtn.disabled = true;
+        btnText.textContent = message;
+        loadingSpinner.style.display = 'inline-block';
+        progressBar.style.display = 'block';
+    }
+
+    completeConversion() {
+        this.updateProgress(100, 'Download ready!');
+        
+        setTimeout(() => {
+            const convertBtn = document.getElementById('convertBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const progressBar = document.getElementById('progressBar');
+            
+            convertBtn.disabled = false;
+            this.updateConvertButton();
+            loadingSpinner.style.display = 'none';
+            progressBar.style.display = 'none';
+            this.updateProgress(0, '');
+        }, 2000);
+    }
+
+    generateHTMLCSS() {
+        return `
+body {
+    font-family: Georgia, serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    background: #fafafa;
+    color: #333;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    padding: 40px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+h1 {
+    color: #2c3e50;
+    font-size: 2.5em;
+    margin-bottom: 0.5em;
+    text-align: center;
+    border-bottom: 3px solid #3498db;
+    padding-bottom: 10px;
+}
+
+h2 {
+    color: #34495e;
+    font-size: 2em;
+    margin-top: 2em;
+    margin-bottom: 1em;
+}
+
+h3 {
+    color: #2c3e50;
+    font-size: 1.5em;
+    margin-top: 1.5em;
+    margin-bottom: 0.75em;
+}
+
+.book-header {
+    text-align: center;
+    margin-bottom: 3em;
+    padding-bottom: 2em;
+    border-bottom: 1px solid #ddd;
+}
+
+.author {
+    font-size: 1.2em;
+    color: #666;
+    margin-bottom: 1em;
+}
+
+.description {
+    font-style: italic;
+    color: #555;
+    margin-bottom: 2em;
+}
+
+.volume-nav {
+    background: #f8f9fa;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+}
+
+.chapter-nav {
+    margin: 20px 0;
+}
+
+.chapter-nav a, .volume-nav a {
+    display: inline-block;
+    margin: 5px 10px 5px 0;
+    padding: 8px 15px;
+    background: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+.chapter-nav a:hover, .volume-nav a:hover {
+    background: #2980b9;
+}
+
+.chapter-content {
+    margin-top: 2em;
+}
+
+.chapter-content p {
+    margin-bottom: 1em;
+    text-align: justify;
+    text-indent: 2em;
+}
+
+.back-nav {
+    margin-top: 3em;
+    padding-top: 2em;
+    border-top: 1px solid #ddd;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+    }
+    
+    h1 {
+        font-size: 2em;
+    }
+    
+    h2 {
+        font-size: 1.5em;
+    }
+}
+`;
+    }
+
+    generateHTMLIndex() {
+        const data = this.bookData;
+        
+        let tocHTML = '';
+        
+        for (const volume of data.content) {
+            tocHTML += `
+                <div class="volume-nav">
+                    <h3>${this.escapeHTML(volume.volume_name)}</h3>
+                    <div class="chapter-nav">
+`;
+            
+            for (const chapter of volume.chapters) {
+                const fileName = `vol${volume.volume_index}_ch${chapter.chapter_index}.html`;
+                tocHTML += `                        <a href="${fileName}">${this.escapeHTML(chapter.chapter_title)}</a>\n`;
+            }
+            
+            tocHTML += `
+                    </div>
+                </div>
+`;
+        }
+        
+        return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${this.escapeHTML(data.title)}</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="book-header">
+            <h1>${this.escapeHTML(data.title)}</h1>
+            <p class="author">by ${this.escapeHTML(data.author)}</p>
+            ${data.description ? `<p class="description">${this.escapeHTML(data.description)}</p>` : ''}
+        </div>
+        
+        <h2>Table of Contents</h2>
+        ${tocHTML}
+    </div>
+</body>
+</html>`;
+    }
+
+    generateHTMLChapter(volume, chapter) {
+        const data = this.bookData;
+        
+        // Format chapter content into paragraphs
+        const paragraphs = chapter.chapter_content.split(/\n\s*\n/).filter(p => p.trim());
+        const contentHTML = paragraphs.map(p => `                <p>${this.escapeHTML(p.trim())}</p>`).join('\n');
+        
+        return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${this.escapeHTML(chapter.chapter_title)} - ${this.escapeHTML(data.title)}</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="book-header">
+            <h1>${this.escapeHTML(data.title)}</h1>
+            <p class="author">by ${this.escapeHTML(data.author)}</p>
+        </div>
+        
+        <h2>${this.escapeHTML(volume.volume_name)}</h2>
+        <h3>${this.escapeHTML(chapter.chapter_title)}</h3>
+        
+        <div class="chapter-content">
+${contentHTML}
+        </div>
+        
+        <div class="back-nav">
+            <a href="index.html">← Back to Table of Contents</a>
+        </div>
+    </div>
+</body>
+</html>`;
+    }
+
+    escapeHTML(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    escapeRTF(text) {
+        return text.replace(/\\/g, '\\\\')
+                   .replace(/\{/g, '\\{')
+                   .replace(/\}/g, '\\}')
+                   .replace(/\n/g, '\\par ')
+                   .replace(/[\u0080-\uFFFF]/g, (match) => {
+                       return '\\u' + match.charCodeAt(0) + '?';
+                   });
     }
 
     generateContainerXML() {
@@ -656,7 +875,8 @@ nav#toc a:hover {
   h1 {
     font-size: 1.5em;
   }
-}`;
+}
+`;
     }
 
     generateUUID() {

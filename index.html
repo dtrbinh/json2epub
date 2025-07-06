@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JSON to EPUB Converter - Convert JSON Books to EPUB Format</title>
-    <meta name="description" content="Free online tool to convert structured JSON book data into EPUB files. Support for multi-volume books, cover images, and EPUB 3.0 standard.">
-    <meta name="keywords" content="JSON to EPUB, EPUB converter, ebook converter, JSON book converter, free EPUB generator">
+    <title>JSON to eBook Converter - Convert JSON Books to Multiple Formats</title>
+    <meta name="description" content="Free online tool to convert structured JSON book data into multiple ebook formats (EPUB, PDF, HTML, TXT). Support for multi-volume books, cover images, and various output formats.">
+    <meta name="keywords" content="JSON to EPUB, JSON to PDF, ebook converter, JSON book converter, free ebook generator, multi-format converter">
     <meta name="author" content="dtrbinh">
     
     <!-- Open Graph / Facebook -->
@@ -27,12 +27,13 @@
     
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
     <div class="container">
         <header class="header">
-            <h1>📚 JSON to EPUB Converter</h1>
-            <p>Transform your structured JSON book data into a proper EPUB file</p>
+            <h1>📚 JSON to eBook Converter</h1>
+            <p>Transform your structured JSON book data into multiple ebook formats</p>
         </header>
 
         <main class="main-content">
@@ -74,6 +75,76 @@
 
             <!-- Convert Section -->
             <section class="convert-section" id="convertSection" style="display: none;">
+                <div class="format-selection">
+                    <h3>📄 Output Format</h3>
+                    <div class="format-grid">
+                        <div class="format-option" data-format="epub">
+                            <input type="radio" id="formatEPUB" name="outputFormat" value="epub" checked>
+                            <label for="formatEPUB">
+                                <div class="format-icon">📚</div>
+                                <div class="format-name">EPUB</div>
+                                <div class="format-desc">Standard ebook format</div>
+                            </label>
+                        </div>
+                        <div class="format-option" data-format="mobi">
+                            <input type="radio" id="formatMOBI" name="outputFormat" value="mobi">
+                            <label for="formatMOBI">
+                                <div class="format-icon">📱</div>
+                                <div class="format-name">MOBI</div>
+                                <div class="format-desc">Amazon Kindle format</div>
+                            </label>
+                        </div>
+                        <div class="format-option" data-format="azw">
+                            <input type="radio" id="formatAZW" name="outputFormat" value="azw">
+                            <label for="formatAZW">
+                                <div class="format-icon">🔒</div>
+                                <div class="format-name">AZW</div>
+                                <div class="format-desc">Kindle with DRM support</div>
+                            </label>
+                        </div>
+                        <div class="format-option" data-format="azw3">
+                            <input type="radio" id="formatAZW3" name="outputFormat" value="azw3">
+                            <label for="formatAZW3">
+                                <div class="format-icon">🚀</div>
+                                <div class="format-name">AZW3</div>
+                                <div class="format-desc">Modern Kindle format</div>
+                            </label>
+                        </div>
+                        <div class="format-option" data-format="pdf">
+                            <input type="radio" id="formatPDF" name="outputFormat" value="pdf">
+                            <label for="formatPDF">
+                                <div class="format-icon">📄</div>
+                                <div class="format-name">PDF</div>
+                                <div class="format-desc">Portable Document Format</div>
+                            </label>
+                        </div>
+                        <div class="format-option" data-format="html">
+                            <input type="radio" id="formatHTML" name="outputFormat" value="html">
+                            <label for="formatHTML">
+                                <div class="format-icon">🌐</div>
+                                <div class="format-name">HTML</div>
+                                <div class="format-desc">Web pages bundle</div>
+                            </label>
+                        </div>
+                        <div class="format-option" data-format="txt">
+                            <input type="radio" id="formatTXT" name="outputFormat" value="txt">
+                            <label for="formatTXT">
+                                <div class="format-icon">📝</div>
+                                <div class="format-name">TXT</div>
+                                <div class="format-desc">Plain text format</div>
+                            </label>
+                        </div>
+                        <div class="format-option" data-format="rtf">
+                            <input type="radio" id="formatRTF" name="outputFormat" value="rtf">
+                            <label for="formatRTF">
+                                <div class="format-icon">📋</div>
+                                <div class="format-name">RTF</div>
+                                <div class="format-desc">Rich Text Format</div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="convert-options">
                     <h3>⚙️ Conversion Options</h3>
                     <div class="option-group">
@@ -93,7 +164,7 @@
                 </div>
                 
                 <button class="convert-btn" id="convertBtn">
-                    <span class="btn-text">🚀 Convert to EPUB</span>
+                    <span class="btn-text">🚀 Convert to eBook</span>
                     <div class="loading-spinner" id="loadingSpinner" style="display: none;"></div>
                 </button>
                 
@@ -149,6 +220,17 @@
         </div>
     </div>
 
+    <!-- Converter modules -->
+    <script src="scripts/epub-converter.js"></script>
+    <script src="scripts/pdf-converter.js"></script>
+    <script src="scripts/html-converter.js"></script>
+    <script src="scripts/txt-converter.js"></script>
+    <script src="scripts/rtf-converter.js"></script>
+    <script src="scripts/mobi-converter.js"></script>
+    <script src="scripts/azw-converter.js"></script>
+    <script src="scripts/azw3-converter.js"></script>
+    
+    <!-- Main script -->
     <script src="script.js"></script>
 </body>
 </html> 

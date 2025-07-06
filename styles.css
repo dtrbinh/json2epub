@@ -264,6 +264,94 @@ body {
     animation: slideIn 0.5s ease;
 }
 
+/* Format Selection */
+.format-selection {
+    margin-bottom: 30px;
+}
+
+.format-selection h3 {
+    margin-bottom: 20px;
+    color: #2d3748;
+    font-size: 1.3rem;
+}
+
+.format-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+    align-items: stretch;
+}
+
+.format-option {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+}
+
+.format-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.format-option label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 15px;
+    background: #f8f9ff;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    min-height: 120px;
+    height: 100%;
+}
+
+.format-option:hover label {
+    background: #f0f4ff;
+    border-color: #667eea;
+    transform: translateY(-2px);
+}
+
+.format-option input[type="radio"]:checked + label {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
+    color: white;
+}
+
+.format-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.format-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+}
+
+.format-desc {
+    font-size: 0.85rem;
+    opacity: 0.8;
+    line-height: 1.2;
+}
+
+.format-option input[type="radio"]:checked + label .format-desc {
+    opacity: 0.9;
+}
+
 .convert-options {
     margin-bottom: 30px;
 }
@@ -578,5 +666,32 @@ body {
     .book-cover {
         width: 100px;
         height: 140px;
+    }
+    
+    .format-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        align-items: stretch;
+    }
+    
+    .format-option {
+        min-height: 100px;
+    }
+    
+    .format-option label {
+        padding: 15px 10px;
+        min-height: 100px;
+    }
+    
+    .format-icon {
+        font-size: 1.5rem;
+    }
+    
+    .format-name {
+        font-size: 1rem;
+    }
+    
+    .format-desc {
+        font-size: 0.8rem;
     }
 } 

@@ -1,24 +1,38 @@
-# JSON to EPUB Converter
+# JSON to eBook Converter
 
 [![Deploy to GitHub Pages](https://github.com/dtrbinh/json2epub/actions/workflows/deploy.yml/badge.svg)](https://github.com/dtrbinh/json2epub/actions/workflows/deploy.yml)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-blue)](https://dtrbinh.github.io/json2epub/)
 
-A static web application that converts structured JSON data into EPUB files. This tool allows you to transform book content stored in JSON format into a properly formatted EPUB file that can be read on various e-readers and devices.
+A static web application that converts structured JSON data into multiple ebook formats. This tool allows you to transform book content stored in JSON format into various formats including EPUB, MOBI, AZW, AZW3, PDF, HTML, TXT, and RTF.
 
 ## 🚀 Live Demo
 
 **Try it now:** [https://dtrbinh.github.io/json2epub/](https://dtrbinh.github.io/json2epub/)
 
-No installation required! Use the live demo to convert your JSON files to EPUB format directly in your browser.
+No installation required! Use the live demo to convert your JSON files to multiple ebook formats directly in your browser.
 
 ## Features
 
 - 🚀 **Client-side conversion** - No server required, works entirely in the browser
-- 📚 **Multi-volume support** - Handle books with multiple volumes and chapters
-- 🎨 **Cover image support** - Include cover images from URLs
-- 📖 **Proper EPUB structure** - Generates valid EPUB 3.0 files
-- 💻 **Simple web interface** - Easy-to-use drag-and-drop or file selection
+- 📚 **Multiple output formats** - EPUB, MOBI, AZW, AZW3, PDF, HTML, TXT, and RTF
+- 📖 **Multi-volume support** - Handle books with multiple volumes and chapters
+- 🎨 **Cover image support** - Include cover images from URLs (EPUB format)
+- ✅ **Standards compliant** - Generates valid EPUB 3.0, proper PDF, and clean HTML
+- 💻 **Simple web interface** - Easy-to-use format selection and drag-and-drop
 - 📱 **Responsive design** - Works on desktop and mobile devices
+
+## Supported Output Formats
+
+| Format | Extension | Description | Best For |
+|--------|-----------|-------------|----------|
+| 📚 **EPUB** | `.epub` | Standard ebook format with full metadata, TOC, and styling | E-readers, ebook libraries |
+| 📱 **MOBI** | `.mobi` | Amazon Kindle format with reflowable text | Older Kindle devices, Kindle apps |
+| 🔒 **AZW** | `.azw` | Amazon Kindle format with DRM support | Kindle devices with DRM |
+| 🚀 **AZW3** | `.azw3` | Modern Amazon Kindle format with enhanced features | Modern Kindle devices, KF8 |
+| 📄 **PDF** | `.pdf` | Portable Document Format with proper pagination | Printing, archival, sharing |
+| 🌐 **HTML** | `.zip` | Bundle of HTML files with navigation and styling | Web publishing, custom readers |
+| 📝 **TXT** | `.txt` | Plain text format with simple formatting | Basic readers, accessibility |
+| 📋 **RTF** | `.rtf` | Rich Text Format with basic formatting | Word processors, compatibility |
 
 ## JSON Structure
 
@@ -81,8 +95,10 @@ The application expects JSON files with the following structure:
 1. **Open the application** in your web browser
 2. **Select or drag-and-drop** your JSON file
 3. **Preview** the parsed content (optional)
-4. **Click "Convert to EPUB"** to generate the file
-5. **Download** the generated EPUB file
+4. **Choose your preferred output format** (EPUB, MOBI, AZW, AZW3, PDF, HTML, TXT, or RTF)
+5. **Configure conversion options** if needed
+6. **Click "Convert to [Format]"** to generate the file
+7. **Download** the generated file
 
 ## Technical Details
 
@@ -90,8 +106,9 @@ The application expects JSON files with the following structure:
 - **HTML5** - Structure and layout
 - **CSS3** - Styling and responsive design
 - **JavaScript (ES6+)** - Core conversion logic
-- **JSZip** - For creating ZIP-based EPUB files
-- **File API** - For handling file uploads
+- **JSZip** - For creating ZIP-based files (EPUB, HTML)
+- **jsPDF** - For PDF generation
+- **File API** - For handling file uploads and downloads
 
 ### EPUB Structure
 The generated EPUB files follow the EPUB 3.0 specification and include:
@@ -102,6 +119,11 @@ The generated EPUB files follow the EPUB 3.0 specification and include:
 - **OEBPS/content/*.xhtml** - Individual chapter files
 - **OEBPS/images/** - Cover and other images (if applicable)
 - **OEBPS/styles/style.css** - Basic styling for chapters
+
+### Kindle Format Details
+- **MOBI** - Uses Palm database format with HTML content, compatible with all Kindle devices
+- **AZW** - MOBI format with Amazon DRM metadata, optimized for Kindle ecosystem
+- **AZW3** - Modern format based on EPUB with KF8 features, enhanced typography and layout
 
 ## Browser Compatibility
 
