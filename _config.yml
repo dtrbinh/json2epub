@@ -1,0 +1,52 @@
+# Site settings
+title: "JSON to EPUB Converter"
+description: "Free online tool to convert structured JSON book data into EPUB files. Support for multi-volume books, cover images, and EPUB 3.0 standard."
+url: "https://dtrbinh.github.io"
+baseurl: "/json2epub"
+
+# Author settings
+author:
+  name: "dtrbinh"
+  url: "https://github.com/dtrbinh"
+
+# GitHub Pages settings
+github:
+  repository_name: "json2epub"
+  owner_name: "dtrbinh"
+
+# SEO settings
+lang: "en"
+timezone: "UTC"
+
+# Plugins
+plugins:
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Exclude files from processing
+exclude:
+  - README.md
+  - .gitignore
+  - .github/
+
+# Include files
+include:
+  - _redirects
+
+# Markdown settings
+markdown: kramdown
+highlighter: rouge
+
+# Sass settings
+sass:
+  style: compressed
+
+# Collections
+collections_dir: collections
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default 

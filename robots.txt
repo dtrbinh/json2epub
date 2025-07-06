@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://dtrbinh.github.io/json2epub/sitemap.xml
+
+# Specific rules
+Allow: /index.html
+Allow: /styles.css
+Allow: /script.js
+Allow: /example.json
+
+# Disallow git and config files
+Disallow: /.git/
+Disallow: /.github/
+Disallow: /_config.yml
+Disallow: /.gitignore 

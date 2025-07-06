@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - JSON to EPUB Converter</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+    <style>
+        .error-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        .error-code {
+            font-size: 8rem;
+            font-weight: bold;
+            color: #667eea;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .error-message {
+            font-size: 1.5rem;
+            color: #333;
+            margin: 20px 0;
+        }
+        
+        .error-description {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .home-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        
+        .home-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .github-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #333;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        
+        .github-button:hover {
+            background: #555;
+            transform: translateY(-2px);
+        }
+        
+        .redirect-info {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .redirect-timer {
+            font-weight: bold;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-container">
+            <div class="error-code">404</div>
+            <div class="error-message">📚 Page Not Found</div>
+            <div class="error-description">
+                The page you're looking for doesn't exist. But don't worry, you can still use the JSON to EPUB converter!
+            </div>
+            
+            <div>
+                <a href="/" class="home-button">🏠 Go to Converter</a>
+                <a href="https://github.com/dtrbinh/json2epub" class="github-button" target="_blank">📋 View on GitHub</a>
+            </div>
+            
+            <div class="redirect-info">
+                <p>You will be automatically redirected to the main application in <span class="redirect-timer" id="timer">5</span> seconds.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-redirect after 5 seconds
+        let timeLeft = 5;
+        const timerElement = document.getElementById('timer');
+        
+        const countdown = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = timeLeft;
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                window.location.href = '/json2epub/';
+            }
+        }, 1000);
+    </script>
+</body>
+</html> 

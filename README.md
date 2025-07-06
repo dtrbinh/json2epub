@@ -1,6 +1,15 @@
 # JSON to EPUB Converter
 
+[![Deploy to GitHub Pages](https://github.com/dtrbinh/json2epub/actions/workflows/deploy.yml/badge.svg)](https://github.com/dtrbinh/json2epub/actions/workflows/deploy.yml)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-blue)](https://dtrbinh.github.io/json2epub/)
+
 A static web application that converts structured JSON data into EPUB files. This tool allows you to transform book content stored in JSON format into a properly formatted EPUB file that can be read on various e-readers and devices.
+
+## 🚀 Live Demo
+
+**Try it now:** [https://dtrbinh.github.io/json2epub/](https://dtrbinh.github.io/json2epub/)
+
+No installation required! Use the live demo to convert your JSON files to EPUB format directly in your browser.
 
 ## Features
 
@@ -113,11 +122,30 @@ Check the `example.json` file in this repository for a sample structure you can 
 
 ## Development
 
+### Running Locally
+
 To run the application locally:
 
 1. Clone this repository
+   ```bash
+   git clone https://github.com/dtrbinh/json2epub.git
+   cd json2epub
+   ```
 2. Open `index.html` in your web browser
 3. No build process or server required!
+
+### Deployment
+
+The application is automatically deployed to GitHub Pages via GitHub Actions:
+
+- **Live URL**: [https://dtrbinh.github.io/json2epub/](https://dtrbinh.github.io/json2epub/)
+- **Auto-deploy**: Triggered on every push to the `main` branch
+- **Status**: Check the deployment badge above for current status
+
+The deployment workflow:
+1. Triggers on push to `main` branch
+2. Uses GitHub Actions to build and deploy
+3. Serves the static files directly from GitHub Pages
 
 ## License
 
